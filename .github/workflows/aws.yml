@@ -20,8 +20,17 @@ jobs:
 
     - name: Install dependencies
       run: npm install
+    
+    - name: Lint with ESLint
+      run: npm run lint
 
-    - name: Run Jest tests
+    - name: Format with Prettier 
+      run: npm run prettier
+
+    - name: Test with Jest
       env:
         CI: true  # Set the CI environment variable
       run: npm run test
+
+    - name: Build stage 
+      run: npm run build
