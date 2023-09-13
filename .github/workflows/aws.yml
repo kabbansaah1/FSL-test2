@@ -1,0 +1,27 @@
+name: Jest CI
+
+on:
+  push:
+    branches:
+      - main  # Change this to your main branch name
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 15  # You can adjust the Node.js version as needed
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run Jest tests
+      env:
+        CI: true  # Set the CI environment variable
+      run: npm run test
