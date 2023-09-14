@@ -14,10 +14,6 @@ env:
   CONTAINER_NAME: demo-deploy           # set this to the name of the container in the
                                                # containerDefinitions section of your task definition
 
-permissions:
-  id-token: write
-  contents: read # This is required for actions/checkout@v2
-
 jobs:
   deploy:
     name: Deploy
