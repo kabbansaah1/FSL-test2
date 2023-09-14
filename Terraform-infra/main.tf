@@ -7,7 +7,7 @@ resource "aws_ecr_repository" "my_first_ecr_repo" {
   name = "my-first-ecr-repo" # Naming my repository
 }
 
-resource "aws_ecs_cluster" "my_cluster" {
+/* resource "aws_ecs_cluster" "my_cluster" {
   name = "my-cluster" # Naming the cluster
 }
 
@@ -162,4 +162,4 @@ resource "aws_security_group" "service_security_group" {
     protocol    = "-1" # Allowing any outgoing protocol 
     cidr_blocks = ["0.0.0.0/0"] # Allowing traffic out to all IP addresses
   }
-}
+} */
