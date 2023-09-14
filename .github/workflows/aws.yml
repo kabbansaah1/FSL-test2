@@ -77,5 +77,5 @@ jobs:
             --region us-west-2 \
             --cluster my-cluster \
             --service my-first-service \
-            --task-definition my-first-task  
+            --task-definition my-first-task:5  
   
