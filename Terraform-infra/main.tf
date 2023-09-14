@@ -2,21 +2,21 @@ provider "aws" {
   region  = "us-west-2" # Setting my region to London. Use your own region here
 }
 
-resource "aws_ecr_repository" "my_first_ecr_repo" {
-  name = "my-first-ecr-repo" # Naming my repository
+resource "aws_ecr_repository" "demo-deploy" {
+  name = "demo-deploy" # Naming my repository
 }
 
-resource "aws_ecs_cluster" "my_cluster" {
-  name = "my-cluster" # Naming the cluster
+resource "aws_ecs_cluster" "demo-deploy" {
+  name = "demo-deploy" # Naming the cluster
 }
 
-resource "aws_ecs_task_definition" "my_first_task" {
-  family                   = "my-first-task" # Naming our first task
+resource "aws_ecs_task_definition" "demo-deploy" {
+  family                   = "demo-deploy" # Naming our first task
   container_definitions    = <<DEFINITION
   [
     {
-      "name": "my-first-task",
-      "image": "${aws_ecr_repository.my_first_ecr_repo.repository_url}",
+      "name": "demo-deploy",
+      "image": "${aws_ecr_repository.demo-deploy.repository_url}",
       "essential": true,
       "portMappings": [
         {
@@ -126,16 +126,16 @@ resource "aws_lb_listener" "listener" {
   }
 }
 
-resource "aws_ecs_service" "my_first_service" {
-  name            = "my-first-service"                             # Naming our first service
-  cluster         = "${aws_ecs_cluster.my_cluster.id}"             # Referencing our created Cluster
-  task_definition = "${aws_ecs_task_definition.my_first_task.arn}" # Referencing the task our service will spin up
+resource "aws_ecs_service" "demo-deploy" {
+  name            = "demo-deploy"                             # Naming our first service
+  cluster         = "${aws_ecs_cluster.demo-deploy.id}"             # Referencing our created Cluster
+  task_definition = "${aws_ecs_task_definition.demo-deploy.arn}" # Referencing the task our service will spin up
   launch_type     = "FARGATE"
   desired_count   = 3 # Setting the number of containers to 3
 
   load_balancer {
     target_group_arn = "${aws_lb_target_group.target_group.arn}" # Referencing our target group
-    container_name   = "${aws_ecs_task_definition.my_first_task.family}"
+    container_name   = "${aws_ecs_task_definition.demo-deploy.family}"
     container_port   = 3000 # Specifying the container port
   }
 
