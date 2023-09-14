@@ -3,7 +3,7 @@ name: Jest CI
 on:
   push:
     branches:
-      - main  # Change this to your main branch name
+      - devel  # Change this to your main branch name
 
 jobs:
   build:
