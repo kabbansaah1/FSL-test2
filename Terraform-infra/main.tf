@@ -1,5 +1,4 @@
 provider "aws" {
-  version = "5.0.0"
   region  = "us-west-2" # Setting my region to London. Use your own region here
 }
 
