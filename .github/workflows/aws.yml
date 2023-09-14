@@ -64,18 +64,29 @@ jobs:
           # Push the image to ECR
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-west-2.amazonaws.com/my-first-ecr-repo:latest
 
-    #  - name: Update ECS task definition
-    #    run: |
-          # Create a new revision for the ECS task definition
-    #      aws ecs register-task-definition \
-    #        --region us-west-2 \
-    #        --family my-first-task \
-    #        --container-definitions "$(cat ecs-container-definition.json)"
+      - name: Update ECS Task Definition and Redeploy
+        run: |
+          # Update ECS task definition with the new image
+          aws ecs register-task-definition --family my-first-task --container-definitions '[
+            {
+              "name": "my-first-task",
+              "image": "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-west-2.amazonaws.com/my-first-ecr-repo:latest",
+              "essential": true,
+              "portMappings": [
+                {
+                  "containerPort": 3000,
+                  "hostPort": 3000
+                }
+              ],
+              "memory": 512,
+              "cpu": 256
+            }
+          ]'
 
-          # Update the ECS service with the new task definition
-     #     aws ecs update-service \
-    #        --region us-west-2 \
-    #        --cluster my-cluster \
-     #       --service my-first-service \
-     #       --task-definition my-first-task  
+          # Update the ECS service to use the new task definition
+          aws ecs update-service --cluster my-cluster --service my-first-service --task-definition my-first-task:latest
+
+
+
+  
   
