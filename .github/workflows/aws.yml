@@ -56,13 +56,13 @@ jobs:
           aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-west-2.amazonaws.com
 
           # Build and tag your Docker image
-          docker build -t app-repo:latest .
+          docker build -t my-first-ecr-repo:latest .
 
           # Tag the image with the ECR repository URI
-          docker tag app-repo:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-west-2.amazonaws.com/app-repo:latest
+          docker tag my-first-ecr-repo:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-west-2.amazonaws.com/my-first-ecr-repo:latest
 
           # Push the image to ECR
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-west-2.amazonaws.com/app-repo:latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-west-2.amazonaws.com/my-first-ecr-repo:latest
 
       - name: Update ECS task definition
         run: |
