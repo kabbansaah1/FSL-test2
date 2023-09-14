@@ -15,14 +15,14 @@ terraform {
   
 }
 provider "aws" {
-  region  = "us-west-2" # Setting my region to London. Use your own region here
+  region  = "us-east-1" # Setting my region to London. Use your own region here
 }
 
 resource "aws_ecr_repository" "demo-deploy" {
   name = "demo-deploy" # Naming my repository
 }
 
-/* resource "aws_ecs_cluster" "demo-deploy" {
+resource "aws_ecs_cluster" "demo-deploy" {
   name = "demo-deploy" # Naming the cluster
 }
 
@@ -79,15 +79,15 @@ resource "aws_default_vpc" "default_vpc" {
 
 # Providing a reference to our default subnets
 resource "aws_default_subnet" "default_subnet_a" {
-  availability_zone = "us-west-2a"
+  availability_zone = "us-east-1a"
 }
 
 resource "aws_default_subnet" "default_subnet_b" {
-  availability_zone = "us-west-2b"
+  availability_zone = "us-east-1b"
 }
 
 resource "aws_default_subnet" "default_subnet_c" {
-  availability_zone = "us-west-2c"
+  availability_zone = "us-east-1c"
 }
 
 resource "aws_alb" "application_load_balancer" {
@@ -177,4 +177,4 @@ resource "aws_security_group" "service_security_group" {
     protocol    = "-1" # Allowing any outgoing protocol 
     cidr_blocks = ["0.0.0.0/0"] # Allowing traffic out to all IP addresses
   }
-} */
+}
