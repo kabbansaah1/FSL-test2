@@ -1,3 +1,19 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+
+  backend s3 {
+    bucket = "kabbansaah1-demo-deploy"
+    key = "itadmin/terraform.tfstate"
+    profile = "itadmin"
+    region = "us-east-1"
+  }
+  
+}
 provider "aws" {
   region  = "us-west-2" # Setting my region to London. Use your own region here
 }
@@ -6,7 +22,7 @@ resource "aws_ecr_repository" "demo-deploy" {
   name = "demo-deploy" # Naming my repository
 }
 
-resource "aws_ecs_cluster" "demo-deploy" {
+/* resource "aws_ecs_cluster" "demo-deploy" {
   name = "demo-deploy" # Naming the cluster
 }
 
@@ -161,4 +177,4 @@ resource "aws_security_group" "service_security_group" {
     protocol    = "-1" # Allowing any outgoing protocol 
     cidr_blocks = ["0.0.0.0/0"] # Allowing traffic out to all IP addresses
   }
-}
+} */
