@@ -6,16 +6,16 @@ terraform {
     }
   }
 
-  backend s3 {
-    bucket = "kabbansaah1-demo-deploy"
-    key = "itadmin/terraform.tfstate"
+  backend "s3" {
+    bucket  = "kabbansaah1-demo-deploy"
+    key     = "test1/terraform.tfstate"
     profile = "itadmin"
-    region = "us-east-1"
+    region  = "us-east-1"
   }
-  
+
 }
 provider "aws" {
-  region  = "us-east-2" # Setting my region to London. Use your own region here
+  region = "us-east-2" # Setting my region to London. Use your own region here
 }
 
 resource "aws_ecr_repository" "demo-deploy" {
@@ -49,12 +49,12 @@ resource "aws_ecs_task_definition" "demo-deploy" {
   network_mode             = "awsvpc"    # Using awsvpc as our network mode as this is required for Fargate
   memory                   = 512         # Specifying the memory our container requires
   cpu                      = 256         # Specifying the CPU our container requires
-  execution_role_arn       = "${aws_iam_role.ecsTaskExecutionRole.arn}"
+  execution_role_arn       = aws_iam_role.ecsTaskExecutionRole.arn
 }
 
 resource "aws_iam_role" "ecsTaskExecutionRole" {
   name               = "ecsTaskExecutionRole"
-  assume_role_policy = "${data.aws_iam_policy_document.assume_role_policy.json}"
+  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
 
 data "aws_iam_policy_document" "assume_role_policy" {
@@ -69,7 +69,7 @@ data "aws_iam_policy_document" "assume_role_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRole_policy" {
-  role       = "${aws_iam_role.ecsTaskExecutionRole.name}"
+  role       = aws_iam_role.ecsTaskExecutionRole.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
@@ -92,6 +92,7 @@ resource "aws_default_subnet" "default_subnet_c" {
 
 resource "aws_alb" "application_load_balancer" {
   name               = "test-lb-tf" # Naming our load balancer
+  internal           = false
   load_balancer_type = "application"
   subnets = [ # Referencing the default subnets
     "${aws_default_subnet.default_subnet_a.id}",
@@ -107,14 +108,14 @@ resource "aws_security_group" "load_balancer_security_group" {
   ingress {
     from_port   = 443 # Allowing traffic in from port 80
     to_port     = 443
-    protocol    = "tcp"
+    protocol    = "TCP"
     cidr_blocks = ["0.0.0.0/0"] # Allowing traffic in from all sources
   }
 
   egress {
-    from_port   = 0 # Allowing any incoming port
-    to_port     = 0 # Allowing any outgoing port
-    protocol    = "-1" # Allowing any outgoing protocol 
+    from_port   = 0             # Allowing any incoming port
+    to_port     = 0             # Allowing any outgoing port
+    protocol    = "-1"          # Allowing any outgoing protocol 
     cidr_blocks = ["0.0.0.0/0"] # Allowing traffic out to all IP addresses
   }
 }
@@ -124,15 +125,15 @@ resource "aws_lb_target_group" "target_group" {
   port        = 80
   protocol    = "HTTP"
   target_type = "ip"
-  vpc_id      = "${aws_default_vpc.default_vpc.id}" # Referencing the default VPC
+  vpc_id      = aws_default_vpc.default_vpc.id # Referencing the default VPC
   health_check {
     matcher = "200,301,302"
-    path = "/"
+    path    = "/"
   }
 }
 
 resource "aws_lb_listener" "listener" {
-  load_balancer_arn = "${aws_alb.application_load_balancer.arn}" # Referencing our load balancer
+  load_balancer_arn = aws_alb.application_load_balancer.arn # Referencing our load balancer
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
@@ -140,20 +141,20 @@ resource "aws_lb_listener" "listener" {
 
   default_action {
     type             = "forward"
-    target_group_arn = "${aws_lb_target_group.target_group.arn}" # Referencing our tagrte group
+    target_group_arn = aws_lb_target_group.target_group.arn # Referencing our tagrte group
   }
 }
 
 resource "aws_ecs_service" "demo-deploy" {
-  name            = "demo-deploy"                             # Naming our first service
-  cluster         = "${aws_ecs_cluster.demo-deploy.id}"             # Referencing our created Cluster
-  task_definition = "${aws_ecs_task_definition.demo-deploy.arn}" # Referencing the task our service will spin up
+  name            = "demo-deploy"                           # Naming our first service
+  cluster         = aws_ecs_cluster.demo-deploy.id          # Referencing our created Cluster
+  task_definition = aws_ecs_task_definition.demo-deploy.arn # Referencing the task our service will spin up
   launch_type     = "FARGATE"
   desired_count   = 3 # Setting the number of containers to 3
 
   load_balancer {
-    target_group_arn = "${aws_lb_target_group.target_group.arn}" # Referencing our target group
-    container_name   = "${aws_ecs_task_definition.demo-deploy.family}"
+    target_group_arn = aws_lb_target_group.target_group.arn # Referencing our target group
+    container_name   = aws_ecs_task_definition.demo-deploy.family
     container_port   = 3000 # Specifying the container port
   }
 
@@ -174,13 +175,15 @@ resource "aws_security_group" "service_security_group" {
   }
 
   egress {
-    from_port   = 0 # Allowing any incoming port
-    to_port     = 0 # Allowing any outgoing port
-    protocol    = "-1" # Allowing any outgoing protocol 
+    from_port   = 0             # Allowing any incoming port
+    to_port     = 0             # Allowing any outgoing port
+    protocol    = "-1"          # Allowing any outgoing protocol 
     cidr_blocks = ["0.0.0.0/0"] # Allowing traffic out to all IP addresses
   }
 }
 
+
 output "app_url" {
   value = aws_alb.application_load_balancer.dns_name
 }
+
