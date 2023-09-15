@@ -15,7 +15,7 @@ terraform {
   
 }
 provider "aws" {
-  region  = "us-east-1" # Setting my region to London. Use your own region here
+  region  = "us-east-2" # Setting my region to London. Use your own region here
 }
 
 resource "aws_ecr_repository" "demo-deploy" {
@@ -79,15 +79,15 @@ resource "aws_default_vpc" "default_vpc" {
 
 # Providing a reference to our default subnets
 resource "aws_default_subnet" "default_subnet_a" {
-  availability_zone = "us-east-1a"
+  availability_zone = "us-east-2a"
 }
 
 resource "aws_default_subnet" "default_subnet_b" {
-  availability_zone = "us-east-1b"
+  availability_zone = "us-east-2b"
 }
 
 resource "aws_default_subnet" "default_subnet_c" {
-  availability_zone = "us-east-1c"
+  availability_zone = "us-east-2c"
 }
 
 resource "aws_alb" "application_load_balancer" {
